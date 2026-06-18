@@ -1,0 +1,107 @@
+{
+  "login": "student_example (e3f4a5b6-7c8d-9e0f-1a2b-3c4d5e6f7a8b)",
+  "graphState": [
+    {
+      "id": "server-001",
+      "type": "vertex",
+      "attributes": {
+        "name": {
+          "type": "string",
+          "system": false,
+          "value": "Web Server"
+        },
+        "cpu": {
+          "type": "int",
+          "system": false,
+          "value": 8
+        },
+        "ram_gb": {
+          "type": "int",
+          "system": false,
+          "value": 32
+        }
+      },
+      "edges": ["edge-web-to-db"],
+      "children": [],
+      "parents": []
+    },
+    {
+      "id": "database-002",
+      "type": "vertex",
+      "attributes": {
+        "name": {
+          "type": "string",
+          "system": false,
+          "value": "PostgreSQL"
+        },
+        "version": {
+          "type": "string",
+          "system": false,
+          "value": "15.2"
+        }
+      },
+      "edges": ["edge-web-to-db"],
+      "children": [],
+      "parents": []
+    },
+    {
+      "id": "app-cluster",
+      "type": "metavertex",
+      "attributes": {
+        "name": {
+          "type": "string",
+          "system": false,
+          "value": "Backend Cluster"
+        },
+        "environment": {
+          "type": "string",
+          "system": false,
+          "value": "production"
+        }
+      },
+      "edges": [],
+      "children": ["server-001", "database-002"],
+      "parents": []
+    },
+    {
+      "id": "edge-web-to-db",
+      "type": "edge",
+      "attributes": {
+        "name": {
+          "type": "string",
+          "system": false,
+          "value": "API calls to DB"
+        },
+        "protocol": {
+          "type": "string",
+          "system": false,
+          "value": "TCP/5432"
+        }
+      },
+      "source": "server-001",
+      "target": "database-002",
+      "directed": true,
+      "edges": [],
+      "children": [],
+      "parents": ["app-cluster"]
+    },
+    {
+      "id": "metaedge-infra",
+      "type": "metaedge",
+      "attributes": {
+        "name": {
+          "type": "string",
+          "system": false,
+          "value": "depends on"
+        }
+      },
+      "source": "app-cluster",
+      "target": "server-001",
+      "directed": true,
+      "edges": [],
+      "children": [],
+      "parents": []
+    }
+  ],
+  "actionLog": []
+}

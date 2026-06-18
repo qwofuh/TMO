@@ -1,0 +1,92 @@
+{
+  "app": "Metagraph Editor",
+  "version": "1.0",
+  "description": "Редактор метаграфов с поддержкой вершин, рёбер, мета-сущностей, атрибутов и истории изменений",
+  "dataModels": {
+    "GraphElement": {
+      "type": "object",
+      "required": ["id", "type"],
+      "properties": {
+        "id": { "type": "string", "description": "Уникальный идентификатор элемента" },
+        "type": {
+          "type": "string",
+          "enum": ["vertex", "edge", "metavertex", "metaedge"],
+          "description": "Тип элемента графа"
+        },
+        "attributes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "value": { "type": ["string", "number", "boolean"] },
+              "type": { "type": "string", "enum": ["string", "int", "float"] },
+              "system": { "type": "boolean" }
+            }
+          }
+        },
+        "edges": { "type": "array", "items": { "type": "string" }, "description": "ID связанных рёбер" },
+        "children": { "type": "array", "items": { "type": "string" }, "description": "ID дочерних элементов (для compound)" },
+        "parents": { "type": "array", "items": { "type": "string" }, "description": "ID родительских элементов" }
+      }
+    },
+    "Vertex": {
+      "allOf": [{ "$ref": "#/dataModels/GraphElement" }],
+      "properties": {
+        "type": { "const": "vertex" }
+      }
+    },
+    "Edge": {
+      "allOf": [{ "$ref": "#/dataModels/GraphElement" }],
+      "properties": {
+        "type": { "const": "edge" },
+        "source": { "type": "string", "description": "ID исходной вершины" },
+        "target": { "type": "string", "description": "ID целевой вершины" },
+        "directed": { "type": "boolean", "default": true }
+      }
+    },
+    "MetaVertex": {
+      "allOf": [{ "$ref": "#/dataModels/GraphElement" }],
+      "properties": {
+        "type": { "const": "metavertex" }
+      }
+    },
+    "MetaEdge": {
+      "allOf": [{ "$ref": "#/dataModels/GraphElement" }],
+      "properties": {
+        "type": { "const": "metaedge" },
+        "source": { "type": "string" },
+        "target": { "type": "string" },
+        "directed": { "type": "boolean", "default": true }
+      }
+    }
+  },
+  "state": {
+    "history": {
+      "undoStack": { "type": "array", "items": { "type": "object" } },
+      "redoStack": { "type": "array", "items": { "type": "object" } },
+      "maxLength": { "type": "number", "default": 100 }
+    },
+    "activity": {
+      "log": { "type": "array", "items": { "type": "object" } },
+      "maxLength": { "type": "number", "default": 1000 }
+    }
+  },
+  "ui": {
+    "selectedElementId": { "type": ["string", "null"] },
+    "theme": { "type": "string", "enum": ["light", "dark"] },
+    "activeTab": { "type": "string", "enum": ["edit", "create"] }
+  },
+  "actions": {
+    "create-element": { "payload": { "type": "object" } },
+    "update-element": { "payload": { "type": "object" } },
+    "delete-element": { "payload": { "id": "string" } },
+    "add-attribute": { "payload": { "label": "string", "type": "string", "value": "any" } },
+    "select-element": { "payload": { "id": "string" } },
+    "undo": {},
+    "redo": {}
+  },
+  "routes": [
+    { "path": "/", "component": "GraphEditor" },
+    { "path": "/auth", "component": "AuthPage" }
+  ]
+}
